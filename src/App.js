@@ -11,6 +11,7 @@ class App extends Component {
     super( props );
 
     this.state = {
+      baseUrl: 'https://joes-autos.herokuapp.com/api',
       vehiclesToDisplay: [],
       buyersToDisplay: []
     };
@@ -31,16 +32,37 @@ class App extends Component {
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    let promise = axios.get(this.state.baseUrl + '/vehicles');
+    promise.then((response) => {
+      toast.success("Successfully Found Vehicles.")
+      this.setState({
+        vehiclesToDisplay: response.data
+      })
+    })
   }
 
   getPotentialBuyers() {
     // axios (GET)
     // setState with response -> buyersToDisplay
+    let promise = axios.get(this.state.baseUrl + '/buyers');
+    promise.then((response) => {
+      toast.success("Successfully Found Buyers.")
+      this.setState({
+        buyersToDisplay: response.data
+      })
+    })
   }
 
   sellCar( id ) {
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
+    let promise = axios.delete(`${this.state.baseUrl}/vehicles/${id}`);
+    promise.then( (response) => {
+      toast.success('Car Sold')
+      this.setState({
+        vehiclesToDisplay: response.data.vehicles
+      })
+    })
   }
 
   filterByMake() {
@@ -60,6 +82,13 @@ class App extends Component {
   updatePrice( priceChange, id ) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
+    let promise = axios.put(`${this.state.baseUrl}/vehicles/${id}/${priceChange}`);
+    promise.then((response) =>{
+      toast.success('Price Updated Successfully')
+      this.setState({
+        vehiclesToDisplay: response.data.vehicles
+      })
+    })
   }
 
   addCar() {
@@ -73,6 +102,13 @@ class App extends Component {
 
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+    let promise = axios.post(this.state.baseUrl + '/vehicles', newCar);
+    promise.then( (response) => {
+      toast.success("Successfully Added Vehicle")
+      this.setState({
+        vehiclesToDisplay: response.data.vehicles
+      })
+    })
   }
 
   addBuyer() {
@@ -93,7 +129,12 @@ class App extends Component {
 
   nameSearch() {
     let searchLetters = this.refs.searchLetters.value;
-
+    let promise = axios.put(`${this.state.baseUrl}/buyers?name=${searchLetters}`);
+    promise.then((response) => {
+      this.setState({
+        buyersToDisplay: response.data
+      })
+    })
     // axios (GET)
     // setState with response -> buyersToDisplay
   }
